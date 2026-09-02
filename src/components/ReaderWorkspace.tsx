@@ -320,8 +320,10 @@ export const ReaderWorkspace: React.FC<ReaderWorkspaceProps> = ({ video, isLoadi
 
         </div>
 
-        <div className="lg:col-span-7 flex flex-col rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 shadow-sm overflow-hidden">
-          <div className="p-4 border-b border-zinc-200 dark:border-zinc-800 flex items-center gap-3 bg-zinc-50/50 dark:bg-zinc-900/50">
+        <div className="lg:col-span-7 flex flex-col rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 shadow-sm">
+          {/* Sticks below the 64px navbar so search stays reachable while the
+              transcript scrolls with the page. */}
+          <div className="sticky top-16 z-10 p-4 border-b border-zinc-200 dark:border-zinc-800 flex items-center gap-3 rounded-t-2xl bg-white/95 dark:bg-zinc-900/95 backdrop-blur-sm">
             <div className="relative flex-1">
               <label htmlFor="transcript-search" className="sr-only">
                 Search transcript
@@ -344,7 +346,16 @@ export const ReaderWorkspace: React.FC<ReaderWorkspaceProps> = ({ video, isLoadi
             </span>
           </div>
 
-          <ol className="p-2 sm:p-4 divide-y divide-zinc-100 dark:divide-zinc-800/80 overflow-y-auto max-h-[70vh] list-none m-0">
+          {/* The transcript flows with the document instead of scrolling inside
+              its own box.
+
+              Two reasons. A nested scroller is a scroll trap on touch: the page
+              stops moving mid-flick and the reader has to find an edge to
+              continue. And Chrome propagates a clipped container's layout
+              overflow to the root element, so a 23,000px transcript in a 630px
+              box left the document itself 23,000px tall — pages of blank space
+              below the footer that you could still scroll through. */}
+          <ol className="p-2 sm:p-4 divide-y divide-zinc-100 dark:divide-zinc-800/80 list-none m-0">
             {filteredSegments.length === 0 ? (
               <li className="py-16 text-center text-zinc-600 dark:text-zinc-400 text-sm">
                 No segments match “{searchQuery}”.
